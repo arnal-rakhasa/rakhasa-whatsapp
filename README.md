@@ -1,4 +1,4 @@
-# rakhasa whatsapp
+# This is my package whatsapp
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/rakhasa/whatsapp.svg?style=flat-square)](https://packagist.org/packages/rakhasa/whatsapp)
 [![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/rakhasa/whatsapp/run-tests?label=tests)](https://github.com/rakhasa/whatsapp/actions?query=workflow%3Arun-tests+branch%3Amain)
@@ -76,7 +76,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [Arnal](https://github.com/arnal-rakhasa)
+- [arnal](https://github.com/arnal)
 - [All Contributors](../../contributors)
 
 ## License
