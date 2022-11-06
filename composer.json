@@ -17,8 +17,10 @@
     ],
     "require": {
         "php": "^7.4|^8.0",
-        "spatie/laravel-package-tools": "^1.12.1",
-        "illuminate/contracts": "^7.0|^8.0|^9.0"
+        "ext-imagick": "*",
+        "simplesoftwareio/simple-qrcode": "~4",
+        "illuminate/contracts": "^7.0|^8.0|^9.0",
+        "spatie/laravel-package-tools": "^1.12.1"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
@@ -30,8 +32,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Rakhasa\\Whatsapp\\": "src",
-            "Rakhasa\\Whatsapp\\Database\\Factories\\": "database/factories"
+            "Rakhasa\\Whatsapp\\": "src/",
+            "Rakhasa\\Whatsapp\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
@@ -40,7 +42,6 @@
         }
     },
     "scripts": {
-        "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
         "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",

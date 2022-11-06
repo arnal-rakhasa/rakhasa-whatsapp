@@ -1,0 +1,25 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up()
+    {
+        Schema::create('whatsapp_sessions', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('session_id')->unique();
+            $table->string('number');
+            $table->string('proxy_url')->nullable();
+            $table->unsignedSmallInteger('is_connected')->default(0);
+            $table->uuid('whatsapp_host_id');
+            $table->timestamps();
+        });
+
+        Schema::table('whatsapp_sessions', function (Blueprint $table) {
+            $table->foreign('whatsapp_host_id', 'FK_whatsapp_sessions_whatsapp_hosts')->references('id')->on('whatsapp_hosts')->onUpdate('CASCADE')->onDelete('CASCADE');
+        });
+    }
+};

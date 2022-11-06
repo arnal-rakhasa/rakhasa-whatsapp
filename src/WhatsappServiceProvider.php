@@ -3,23 +3,26 @@
 namespace Rakhasa\Whatsapp;
 
 use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Rakhasa\Whatsapp\Commands\WhatsappCommand;
+use Rakhasa\Whatsapp\WhatsappEventServiceProvider;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class WhatsappServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
         $package
             ->name('whatsapp')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_whatsapp_table')
+            ->hasRoute('web')
+            ->hasConfigFile('rakhasa-whatsapp')
+            ->hasMigration('create_whatsapp_hosts_table')
+            ->hasMigration('create_whatsapp_proxies_table')
+            ->hasMigration('create_whatsapp_sessions_table')
             ->hasCommand(WhatsappCommand::class);
+    }
+
+    public function registeringPackage()
+    {
+        $this->app->register(WhatsappEventServiceProvider::class);
     }
 }
