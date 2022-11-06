@@ -37,16 +37,16 @@ return [
     'webhook' => [
         \Rakhasa\Whatsapp\Sources\WaMulti::class => [
             'routes' => [
-                'webhook/whatsapp/notify/logout' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'notifyLogout'],
-                'webhook/whatsapp/notify/receive' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'notifyReceive'],
-                'webhook/whatsapp/notify/connectivity' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'notifyConnectivity'],
-                'webhook/whatsapp/message/text' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'messageText'],
-                'webhook/whatsapp/message/image' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'messageImage'],
-                'webhook/whatsapp/message/video' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'messageVideo'],
-                'webhook/whatsapp/message/audio' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'messageAudio'],
-                'webhook/whatsapp/message/doc' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'messageDoc'],
-                'webhook/whatsapp/message/contact' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'messageContact'],
-                'webhook/whatsapp/message/location' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'messageLocation'],
+                'webhook/whatsapp/wa-multi/notify/logout' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'notifyLogout'],
+                'webhook/whatsapp/wa-multi/notify/receive' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'notifyReceive'],
+                'webhook/whatsapp/wa-multi/notify/connectivity' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'notifyConnectivity'],
+                'webhook/whatsapp/wa-multi/message/text' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'messageText'],
+                'webhook/whatsapp/wa-multi/message/image' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'messageImage'],
+                'webhook/whatsapp/wa-multi/message/video' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'messageVideo'],
+                'webhook/whatsapp/wa-multi/message/audio' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'messageAudio'],
+                'webhook/whatsapp/wa-multi/message/doc' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'messageDoc'],
+                'webhook/whatsapp/wa-multi/message/contact' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'messageContact'],
+                'webhook/whatsapp/wa-multi/message/location' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'messageLocation'],
             ],
         ],
         \Rakhasa\Whatsapp\Sources\Wabot::class => [

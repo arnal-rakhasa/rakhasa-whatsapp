@@ -5,7 +5,12 @@ namespace Rakhasa\Whatsapp\Contracts;
 interface Handler
 {
     /**
-     * listen event handler
+     * Handler construct
+     */
+    public function __construct();
+
+    /**
+     * Listen event handler
      *
      * @param string $type
      * @param array $data

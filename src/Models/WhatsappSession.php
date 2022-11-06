@@ -18,9 +18,13 @@ class WhatsappSession extends Model
     protected $fillable = [
         'session_id',
         'number',
+        'name',
         'proxy_url',
         'is_connected',
         'whatsapp_host_id',
+        'is_active',
+        'last_event',
+        'last_message',
     ];
 
     /**
