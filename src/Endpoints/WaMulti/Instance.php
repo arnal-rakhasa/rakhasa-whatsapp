@@ -6,6 +6,8 @@ use Pusher\ApiErrorException;
 use Rakhasa\Whatsapp\Concerns\HasRequest;
 use Rakhasa\Whatsapp\Contracts\Adapter;
 use Rakhasa\Whatsapp\Contracts\Endpoint;
+use Rakhasa\Whatsapp\Exceptions\InvalidSessionIdException;
+use Rakhasa\Whatsapp\Exceptions\WhatsappNotLoggedIn;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class Instance implements Endpoint
@@ -65,6 +67,12 @@ class Instance implements Endpoint
         ]));
 
         if ($response->failed()) {
+            if ($response->json('message') == 'Invalid Session Id') {
+                throw new InvalidSessionIdException($sessionId);
+            } elseif ($response->json('message') == 'Whatsapp not LoggedIn') {
+                throw new WhatsappNotLoggedIn;
+            }
+
             throw new ApiErrorException($response->json('message'));
         }
 

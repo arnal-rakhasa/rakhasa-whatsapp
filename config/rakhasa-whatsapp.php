@@ -18,8 +18,8 @@ return [
     'source' => [
         'default' => \Rakhasa\Whatsapp\Sources\WaMulti::class,
         'list' => [
-            \Rakhasa\Whatsapp\Sources\WaMulti::class,
-            \Rakhasa\Whatsapp\Sources\Wabot::class,
+            'wa-multi' => \Rakhasa\Whatsapp\Sources\WaMulti::class,
+            'wabot' => \Rakhasa\Whatsapp\Sources\Wabot::class,
         ]
     ],
 
@@ -36,6 +36,7 @@ return [
 
     'webhook' => [
         \Rakhasa\Whatsapp\Sources\WaMulti::class => [
+            'base' => env('BASE_WEBHOOK_WAMULTI_URL', url('webhook/whatsapp/wa-multi')),
             'routes' => [
                 'webhook/whatsapp/wa-multi/notify/logout' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'notifyLogout'],
                 'webhook/whatsapp/wa-multi/notify/receive' => [\Rakhasa\Whatsapp\Http\Controllers\WaMultiWebhookController::class, 'notifyReceive'],
@@ -50,6 +51,7 @@ return [
             ],
         ],
         \Rakhasa\Whatsapp\Sources\Wabot::class => [
+            'base' => env('BASE_WEBHOOK_WABOT_URL', url('webhook/whatsapp/wabot')),
             'routes' => [],
         ]
     ],
@@ -129,5 +131,23 @@ return [
         'host' => \Rakhasa\Whatsapp\Models\WhatsappHost::class,
         'proxy' => \Rakhasa\Whatsapp\Models\WhatsappProxy::class,
         'session' => \Rakhasa\Whatsapp\Models\WhatsappSession::class,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Auth Config
+    |--------------------------------------------------------------------------
+    |
+    | This value is contains configuration of authentication of certain source
+    | like list of available authentication and other configuration. You may
+    | add your own authentication if you have custom auth implementation.
+    |
+    */
+
+    'auth' => [
+        'list' => [
+            'none' => \Rakhasa\Whatsapp\Auth\None::class,
+            'api_token' => \Rakhasa\Whatsapp\Auth\APIToken::class
+        ]
     ]
 ];

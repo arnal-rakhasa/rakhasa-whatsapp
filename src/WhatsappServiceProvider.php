@@ -17,8 +17,7 @@ class WhatsappServiceProvider extends PackageServiceProvider
             ->hasConfigFile('rakhasa-whatsapp')
             ->hasMigration('create_whatsapp_hosts_table')
             ->hasMigration('create_whatsapp_proxies_table')
-            ->hasMigration('create_whatsapp_sessions_table')
-            ->hasCommand(WhatsappCommand::class);
+            ->hasMigration('create_whatsapp_sessions_table');
     }
 
     public function registeringPackage()

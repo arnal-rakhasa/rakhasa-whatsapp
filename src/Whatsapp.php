@@ -3,17 +3,24 @@
 namespace Rakhasa\Whatsapp;
 
 use Exception;
-use Illuminate\Support\Str;
-use Rakhasa\Whatsapp\Auth\None;
 use Rakhasa\Whatsapp\Contracts\Auth;
-use Rakhasa\Whatsapp\Adapters\Client;
-use Rakhasa\Whatsapp\Contracts\Adapter;
-use Rakhasa\Whatsapp\Contracts\Source;
-use Rakhasa\Whatsapp\Endpoints\Instance;
 use Rakhasa\Whatsapp\Endpoints\Misc;
+use Rakhasa\Whatsapp\Adapters\Client;
+use Rakhasa\Whatsapp\Concerns\HasAuth;
+use Rakhasa\Whatsapp\Concerns\HasMisc;
+use Rakhasa\Whatsapp\Contracts\Adapter;
+use Rakhasa\Whatsapp\Concerns\HasSource;
+use Rakhasa\Whatsapp\Endpoints\Instance;
+use Rakhasa\Whatsapp\Concerns\HasSession;
+use Rakhasa\Whatsapp\Contracts\HostModel;
+use Rakhasa\Whatsapp\Concerns\HasInstance;
+use Rakhasa\Whatsapp\Contracts\ProxyModel;
+use Rakhasa\Whatsapp\Contracts\SessionModel;
 
 class Whatsapp
 {
+    use HasAuth, HasSession, HasInstance, HasMisc, HasSource;
+
     /**
      * auth class instance
      *
@@ -22,42 +29,56 @@ class Whatsapp
     protected Auth $auth;
 
     /**
-     * instance class instance
+     * Instance class instance
      *
      * @var Instance
      */
     protected Instance $instance;
 
     /**
-     * instance class misc
+     * Instance class misc
      *
      * @var Misc
      */
     protected Misc $misc;
 
     /**
-     * instance of client adapter
+     * Instance of client adapter
      *
      * @var Client
      */
     protected Adapter $adapter;
 
     /**
-     * key for session id
+     * Key session ID whatsapp
      *
      * @var string
      */
-    protected string $key = '';
+    protected string $key;
 
     /**
-     * webhook of whatsapp
+     * Session model
      *
-     * @var string
+     * @var SessionModel
      */
-    protected string $webhook;
+    protected SessionModel $session;
 
     /**
-     * proxy url
+     * Host model
+     *
+     * @var HostModel|null
+     */
+    protected ?HostModel $host;
+
+    /**
+     * Proxy model
+     *
+     * @var ProxyModel|null
+     */
+    protected ?ProxyModel $proxy;
+
+    /**
+     * Proxy url
      *
      * @var string
      */
@@ -66,58 +87,42 @@ class Whatsapp
     /**
      * Whatsapp construct
      *
-     * @param string $baseUrl
-     * @param Auth|null $auth
-     * @param Source|null $source
+     * @param string $key
      */
-    public function __construct(string $baseUrl, ?Auth $auth = null, ?Source $source = null)
+    public function __construct(string $key)
     {
-        if (is_null($auth)) {
-            $auth = new None;
-        }
-        if (is_null($source)) {
-            $class = config('rakhasa-whatsapp.source.default');
-            $source = new $class;
-        }
-        $this->adapter = new Client($auth, $baseUrl);
-        $this->instance = new Instance($this->adapter, $source);
-        $this->misc = new Misc($this->adapter, $source);
-    }
+        $this->key = $key;
 
-    /**
-     * Set AUTH class
-     *
-     * @param Auth $auth
-     * @return void
-     */
-    public function setAuth(Auth $auth): void
-    {
-        $this->auth = $auth;
-    }
-
-    /**
-     * Get AUTH class
-     *
-     * @return Auth
-     */
-    public function getAuth(): Auth
-    {
-        return $this->auth;
+        if ($this->getSession()) {
+            $this->loadSession();
+        }
     }
 
     /**
      * init whatsapp instance
      *
-     * @param string $key
-     * @param string $webhook
-     * @param string $proxyUrl
      * @return void
      */
-    public function init(string $key, string $webhook = '', string $proxyUrl = '')
+    public function init()
     {
-        $this->key = $key;
-        $this->webhook = $webhook;
-        $this->proxyUrl = $proxyUrl;
+        $auth = $this->getAuthByNamespace($this->host->auth);
+        $this->setAuth(new $auth);
+
+        $this->initClasses();
+    }
+
+    /**
+     * Initialized classes
+     *
+     * @return void
+     */
+    public function initClasses()
+    {
+        $source = $this->getSourceInstance();
+
+        $this->adapter = new Client($this->auth, $this->host->host);
+        $this->instance = new Instance($this->adapter, $source);
+        $this->misc = new Misc($this->adapter, $source);
     }
 
     /**
@@ -137,42 +142,42 @@ class Whatsapp
      */
     public function getWebhook(): string
     {
-        return $this->webhook;
+        return config('rakhasa-whatsapp.webhook')[$this->getSourceNamespace()]['base'];
     }
 
     /**
-     * get qrcode in base64 format
+     * Persist session init
      *
-     * @return string
-     */
-    public function qrcode(): string
-    {
-        $this->checkKey();
-
-        return $this->instance->qrcode($this->key, $this->webhook, $this->proxyUrl);
-    }
-
-    /**
-     * check if number registered on whatsapp
-     *
-     * @param string $number
+     * @param array $data
+     * @param string $lastEvent
      * @return boolean
      */
-    public function hasWhatsapp(string $number): bool
+    public function persist(array $data, string $lastEvent): bool
     {
-        return $this->misc->hasWhatsapp($number, $this->key);
+        if ($whatsappSession = $this->getSession()) {
+            $whatsappSession->safeUpdate($data, $lastEvent);
+            return true;
+        }
+
+        if (!$initSession = $this->getInitSession()) {
+            return false;
+        }
+
+        $initSession->safeUpdate($data, $lastEvent);
+
+        return true;
     }
 
     /**
-     * Undocumented function
+     * Check if can call endpoint class
      *
      * @throws Exception
      * @return void
      */
-    private function checkKey(): void
+    protected function checkClasses(): void
     {
-        if (!$this->key) {
-            throw new Exception('key not initialized');
+        if (!isset($this->instance) || !isset($this->misc)) {
+            throw new Exception('Session not initialized');
         }
     }
 }

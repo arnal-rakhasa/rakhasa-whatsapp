@@ -30,10 +30,10 @@ class Instance extends Endpoint
      *
      * @param string $key
      * @param string $webhook
-     * @param string $proxyUrl
+     * @param string $proxyUrl|null
      * @return string
      */
-    public function qrcode(string $key, string $webhook, string $proxyUrl): string
+    public function qrcode(string $key, string $webhook, ?string $proxyUrl): string
     {
         return $this->endpoint->qrcode($key, $webhook, $proxyUrl);
     }
@@ -41,9 +41,10 @@ class Instance extends Endpoint
     /**
      * logout whatsapp session
      *
+     * @param string $key
      * @return boolean
      */
-    public function logout(): bool
+    public function logout(string $key): bool
     {
         return $this->endpoint->logout($key);
     }

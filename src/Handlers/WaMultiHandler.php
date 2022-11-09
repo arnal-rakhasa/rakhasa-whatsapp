@@ -3,6 +3,7 @@
 namespace Rakhasa\Whatsapp\Handlers;
 
 use Rakhasa\Whatsapp\Contracts\Handler;
+use Rakhasa\Whatsapp\Whatsapp;
 
 class WaMultiHandler implements Handler
 {
@@ -66,11 +67,17 @@ class WaMultiHandler implements Handler
         if (isset($data['sessionId'])) {
             $sessionId = $data['sessionId'];
 
-            $this->whatsappHost::where('session_id', $sessionId)->update([
-                'is_connected' => 0,
-                'last_event' => 'notify.logout',
-                'last_message' => $data['reason']
-            ]);
+            if ($whatsappSession = $this->whatsappHost::withTrashed()->where('session_id', $sessionId)->first()) {
+                if ($whatsappSession->trashed()) {
+                    $whatsappSession->forceDelete();
+                } else {
+                    $whatsappSession->update([
+                        'is_connected' => false,
+                        'last_event' => 'notify.logout',
+                        'last_message' => $data['reason']
+                    ]);
+                }
+            }
         }
     }
 
@@ -96,15 +103,8 @@ class WaMultiHandler implements Handler
         if (isset($data['sessionId'])) {
             $sessionId = $data['sessionId'];
 
-            $this->whatsappHost::updateOrCreate([
-                'session_id' => $sessionId
-            ], [
-                'is_connected' => $data['isConnected'],
-                'name' => $data['pushName'],
-                'number' => $data['number'],
-                'last_event' => 'notify.connectivity',
-                'last_message' => $data['reason']
-            ]);
+            $whatsapp = new Whatsapp($sessionId);
+            $whatsapp->persist($data, 'notify.connectivity');
         }
     }
 }

@@ -4,11 +4,13 @@ namespace Rakhasa\Whatsapp\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Rakhasa\Whatsapp\Concerns\Sessionable;
 use Rakhasa\Whatsapp\Concerns\Uuids;
+use Rakhasa\Whatsapp\Contracts\SessionModel;
 
-class WhatsappSession extends Model
+class WhatsappSession extends Model implements SessionModel
 {
-    use HasFactory, Uuids;
+    use HasFactory, Uuids, Sessionable;
 
     /**
    * The attributes that are mass assignable.
@@ -26,14 +28,4 @@ class WhatsappSession extends Model
         'last_event',
         'last_message',
     ];
-
-    /**
-     * include relation whatsapp host
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function whatsappHost(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(config('rakhasa-whatsapp.models.host'));
-    }
 }
