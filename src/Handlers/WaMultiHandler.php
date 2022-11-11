@@ -104,7 +104,7 @@ class WaMultiHandler implements Handler
             $sessionId = $data['sessionId'];
 
             $whatsapp = new Whatsapp($sessionId);
-            $whatsapp->persist($data, 'notify.connectivity');
+            $whatsapp->persist($data['isConnected'], $data['pushName'] ?? '', $data['number'] ?? '', $data['reason'] ?? '', 'notify.connectivity');
         }
     }
 }

@@ -21,7 +21,8 @@ class WhatsappHost extends Model implements HostModel
         'is_active',
         'source',
         'auth',
-        'properties'
+        'properties',
+        'auth_properties'
     ];
 
      /**
@@ -31,6 +32,7 @@ class WhatsappHost extends Model implements HostModel
      */
     protected $casts = [
         'properties' => 'array',
+        'auth_properties' => 'array',
     ];
 
     /**

@@ -63,7 +63,7 @@ trait HasSession
         $this->host = $this->session->whatsappHost;
 
         $auth = $this->getAuthByNamespace($this->host->auth);
-        $this->setAuth(new $auth);
+        $this->setAuth(new $auth($this->session->whatsappHost->auth_properties));
 
         $this->initClasses();
     }

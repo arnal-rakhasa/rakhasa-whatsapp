@@ -52,7 +52,11 @@ return [
         ],
         \Rakhasa\Whatsapp\Sources\Wabot::class => [
             'base' => env('BASE_WEBHOOK_WABOT_URL', url('webhook/whatsapp/wabot')),
-            'routes' => [],
+            'routes' => [
+                'webhook/whatsapp/wabot/notify/logout' => [\Rakhasa\Whatsapp\Http\Controllers\WabotWebhookController::class, 'notifyLogout'],
+                'webhook/whatsapp/wabot/notify/receive' => [\Rakhasa\Whatsapp\Http\Controllers\WabotWebhookController::class, 'notifyReceive'],
+                'webhook/whatsapp/wabot/notify/connectivity' => [\Rakhasa\Whatsapp\Http\Controllers\WabotWebhookController::class, 'notifyConnectivity'],
+            ],
         ]
     ],
 
@@ -147,7 +151,8 @@ return [
     'auth' => [
         'list' => [
             'none' => \Rakhasa\Whatsapp\Auth\None::class,
-            'api_token' => \Rakhasa\Whatsapp\Auth\APIToken::class
+            'api_token' => \Rakhasa\Whatsapp\Auth\APIToken::class,
+            'api_key' => \Rakhasa\Whatsapp\Auth\APIKey::class
         ]
     ]
 ];

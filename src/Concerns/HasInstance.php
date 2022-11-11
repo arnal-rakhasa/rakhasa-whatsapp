@@ -27,4 +27,14 @@ trait HasInstance
 
         return $this->instance->logout($this->key);
     }
+
+    /**
+     * Get list contact
+     *
+     * @return array
+     */
+    public function contacts(): array
+    {
+        return $this->instance->info($this->key);
+    }
 }

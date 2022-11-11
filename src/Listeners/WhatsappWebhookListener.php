@@ -36,5 +36,7 @@ class WhatsappWebhookListener
             $handler = new $handlerClass;
             $handler->listen($type, $data);
         }
+
+        info($data);
     }
 }

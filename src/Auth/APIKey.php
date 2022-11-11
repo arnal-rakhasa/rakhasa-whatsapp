@@ -4,10 +4,10 @@ namespace Rakhasa\Whatsapp\Auth;
 
 use Rakhasa\Whatsapp\Contracts\Auth;
 
-class APIToken implements Auth
+class APIKey implements Auth
 {
     /**
-     * Bearer api token
+     * API token
      *
      * @var string|null
      */
@@ -29,7 +29,8 @@ class APIToken implements Auth
     public function getHeaders(): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->apiToken
+            'Content-Type' => 'application/keyauth.api.v1+json',
+            'X-Token' => $this->apiToken
         ];
     }
 }

@@ -3,7 +3,7 @@
 
 namespace Rakhasa\Whatsapp\Endpoints\WaMulti;
 
-use Pusher\ApiErrorException;
+use Rakhasa\Whatsapp\Exceptions\ApiResponseException;
 use Rakhasa\Whatsapp\Contracts\Adapter;
 use Rakhasa\Whatsapp\Contracts\Endpoint;
 
@@ -29,6 +29,7 @@ class Misc implements Endpoint
     /**
      * check if number registered on whatsapp
      *
+     * @throws ApiResponseException
      * @param string $number
      * @param string $sessionId
      * @return boolean
@@ -40,7 +41,7 @@ class Misc implements Endpoint
         ]);
 
         if ($response->failed()) {
-            throw new ApiErrorException($response->json('message'));
+            throw new ApiResponseException($response->json('message'));
         }
 
         return $response->json('hasWhatsApp');

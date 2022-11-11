@@ -106,7 +106,7 @@ class Whatsapp
     public function init()
     {
         $auth = $this->getAuthByNamespace($this->host->auth);
-        $this->setAuth(new $auth);
+        $this->setAuth(new $auth($this->host->auth_properties));
 
         $this->initClasses();
     }
@@ -152,10 +152,10 @@ class Whatsapp
      * @param string $lastEvent
      * @return boolean
      */
-    public function persist(array $data, string $lastEvent): bool
+    public function persist(bool $isConnected, string $name = '', string $number, string $reason, string $lastEvent): bool
     {
         if ($whatsappSession = $this->getSession()) {
-            $whatsappSession->safeUpdate($data, $lastEvent);
+            $whatsappSession->safeUpdate($isConnected, $name, $number, $reason, $lastEvent);
             return true;
         }
 
@@ -163,7 +163,7 @@ class Whatsapp
             return false;
         }
 
-        $initSession->safeUpdate($data, $lastEvent);
+        $initSession->safeUpdate($isConnected, $name, $number, $reason, $lastEvent);
 
         return true;
     }

@@ -39,6 +39,17 @@ class Instance extends Endpoint
     }
 
     /**
+     * Get list contact
+     *
+     * @param string $key
+     * @return array
+     */
+    public function contacts(string $key): array
+    {
+        return $this->endpoint->contacts($key);
+    }
+
+    /**
      * logout whatsapp session
      *
      * @param string $key

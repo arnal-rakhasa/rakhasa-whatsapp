@@ -25,6 +25,7 @@ class WhatsappSession extends Model implements SessionModel
         'is_connected',
         'whatsapp_host_id',
         'is_active',
+        'is_used',
         'last_event',
         'last_message',
     ];

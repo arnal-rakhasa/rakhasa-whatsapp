@@ -1,8 +1,7 @@
 <?php
 
-namespace Rakhasa\Whatsapp\Endpoints\WaMulti;
+namespace Rakhasa\Whatsapp\Endpoints\Wabot;
 
-use Illuminate\Support\Facades\Http;
 use Rakhasa\Whatsapp\Exceptions\ApiResponseException;
 use Rakhasa\Whatsapp\Concerns\HasRequest;
 use Rakhasa\Whatsapp\Contracts\Adapter;
@@ -41,17 +40,16 @@ class Instance implements Endpoint
      */
     public function qrcode(string $sessionId, string $webhook = '', string $proxyUrl = ''): string
     {
-        $response = $this->adapter->asForm()->post('/api/profile/scanqr?', $this->validateRequest([
-            'sessionId' => $sessionId,
-            'hookURL' => $webhook,
-            'proxyURL' => $proxyUrl
+        $response = $this->adapter->get('instance/init', $this->validateRequest([
+            'key' => $sessionId,
+            'webhookUrl' => $webhook
         ]));
 
         if ($response->failed()) {
             throw new ApiResponseException($response->json('message'));
         }
 
-        return $this->qrToBase64($response->json('base64'));
+        return $this->getQrCode($sessionId);
     }
 
     /**
@@ -63,15 +61,13 @@ class Instance implements Endpoint
      */
     public function logout(string $sessionId): bool
     {
-        $response = $this->adapter->asForm()->post('api/profile/logout', $this->validateRequest([
-            'sessionId' => $sessionId
+        $response = $this->adapter->delete('instance/logout', $this->validateRequest([
+            'key' => $sessionId,
         ]));
 
         if ($response->failed()) {
-            if ($response->json('message') == 'Invalid Session Id') {
-                throw new InvalidSessionIdException($sessionId);
-            } elseif ($response->json('message') == 'Whatsapp not LoggedIn') {
-                throw new WhatsappNotLoggedIn;
+            if ($response->json('message') == 'no key query was present') {
+                return true;
             }
 
             throw new ApiResponseException($response->json('message'));
@@ -81,33 +77,43 @@ class Instance implements Endpoint
     }
 
     /**
-     * Get list contacts
+     * Get QR Code
      *
      * @throws ApiResponseException
      * @param string $sessionId
-     * @return array
+     * @return string
      */
-    public function contacts(string $sessionId): array
+    private function getQrCode(string $sessionId): string
     {
-        $response = $this->adapter->get('api/profile/contacts', $this->validateRequest([
-            'sessionId' => $sessionId
-        ]));
+        $response = $this->fetchQrcode($sessionId);
 
-        if ($response->failed()) {
-            throw new ApiResponseException($response->json('message'));
+        $qrCode = $response->json('qrcode');
+        $maxRetry = 10;
+        $qrRetry = 1;
+
+        while ($qrCode == '' && $qrRetry <= $maxRetry) {
+            $response = $this->fetchQrcode($sessionId);
+            if ($response->failed()) {
+                throw new ApiResponseException($response->json('message'));
+            }
+            $qrCode = $response->json('qrcode');
+            $qrRetry++;
+            sleep(1);
         }
 
-        return $response->json();
+        return $qrCode;
     }
 
     /**
-     * convert qrcode to base64 image
+     * fetch qrcode
      *
-     * @param string $qrcode
-     * @return string
+     * @param string $sessionId
+     * @return object
      */
-    private function qrToBase64(string $qrcode): string
+    private function fetchQrcode(string $sessionId): object
     {
-        return 'data:image/png;base64, ' . base64_encode(QrCode::format('png')->size(256)->generate($qrcode));
+        return $this->adapter->get('instance/qrbase64', $this->validateRequest([
+            'key' => $sessionId
+        ]));
     }
 }

@@ -20,6 +20,28 @@ trait Sessionable
     }
 
     /**
+     * Get used whatsapp session
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeUsed(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    {
+        return $query->where('is_used', 1);
+    }
+
+    /**
+     * Get unused whatsapp session
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeUnused(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    {
+        return $query->where('is_used', 0);
+    }
+
+    /**
      * include relation whatsapp host
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -46,15 +68,35 @@ trait Sessionable
      * @param string $lastEvent
      * @return void
      */
-    public function safeUpdate(array $data, string $lastEvent): void
+    public function safeUpdate(bool $isConnected, string $name, string $number, string $reason, string $lastEvent): void
     {
-        $this->is_connected = $data['isConnected'];
-        if ($data['pushName']) {
-            $this->name = $data['pushName'];
-        }
-        $this->number = $data['number'];
+        $this->is_connected = $isConnected;
+        $this->name = $name;
+        $this->number = $number;
+        $this->last_message = $reason;
         $this->last_event = $lastEvent;
-        $this->last_message = $data['reason'];
+        $this->save();
+    }
+
+    /**
+     * Marked whatsapp session as used
+     *
+     * @return void
+     */
+    public function startBot(): void
+    {
+        $this->is_used = 1;
+        $this->save();
+    }
+
+    /**
+     * Unmarked whatsapp session as used
+     *
+     * @return void
+     */
+    public function stopBot(): void
+    {
+        $this->is_used = 0;
         $this->save();
     }
 }
