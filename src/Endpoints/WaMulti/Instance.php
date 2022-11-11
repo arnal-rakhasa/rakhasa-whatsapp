@@ -2,7 +2,6 @@
 
 namespace Rakhasa\Whatsapp\Endpoints\WaMulti;
 
-use Illuminate\Support\Facades\Http;
 use Rakhasa\Whatsapp\Exceptions\ApiResponseException;
 use Rakhasa\Whatsapp\Concerns\HasRequest;
 use Rakhasa\Whatsapp\Contracts\Adapter;
